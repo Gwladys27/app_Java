@@ -1,0 +1,304 @@
+package Proj;
+
+		
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import javax.swing.AbstractButton;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.text.PasswordView;
+import javax.xml.transform.Result;
+
+import com.mysql.jdbc.Connection;
+import com.mysql.jdbc.PreparedStatement;
+
+		
+
+		/**
+		 * @author Tatiana
+		 *
+		 */
+		@SuppressWarnings("unused")
+		public class PMSI extends JFrame{
+			private static final String Login = null;
+			protected static final String JoptionPane = null;
+			protected static final String Password = null;
+			protected static final AbstractButton JCheckBox1 = null;
+			protected static final JPasswordField JPasswordField1 = null;
+			// Les variables
+			Connect cnx = new Connect();
+			String path = null;
+			byte[] userimage = null;
+			Statement stm;
+			ResultSet rs;
+			JLabel lblTitre, lblutilisateur, lbllogin, lblpassword;
+			JTextField txtlogin;
+			JButton btnforgetpassword;
+			JPasswordField JPassworldFieldpassword;
+			JButton btnenregistrer, btnretour,btnsuivant,btnterminer,btnconnection;
+			JTable table, table1;
+			JScrollPane scroll, scroll1;
+			protected Object sql;
+			JCheckBox ckbxvue;
+			
+			public void init() {
+				table1 = new JTable();
+				scroll1 = new JScrollPane();
+				scroll1.setBounds(10, 280, 770, 130);
+			}
+
+			@SuppressWarnings("deprecation")
+			public PMSI() {
+				super.setTitle("PMSI");
+				super.setSize(800, 450);
+				super.setLocationRelativeTo(null);
+				super.setResizable(false);
+				super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				JPanel pn = new JPanel();
+				pn.setLayout(null);
+				add(pn);
+				pn.setBackground(new Color(210,200,200));
+				
+				//Libellé du titre
+				lblTitre = new JLabel("UTILISATEUR");
+				lblTitre.setBounds(300,20,600,30);
+				lblTitre.setFont(new Font("Arial",Font.BOLD, 30));
+				lblTitre.setForeground(new Color(0, 1, 200));
+				pn.add(lblTitre);
+				
+				//Login utilisateur
+				lbllogin = new JLabel("Login");
+				lbllogin.setBounds(60,100,200,30);
+				lbllogin.setFont(new Font("Arial",Font.PLAIN, 25));
+				lbllogin.setForeground(new Color(0, 1, 10));
+				pn.add(lbllogin);
+				
+				txtlogin = new JTextField();
+				txtlogin.setBounds(250,100,300,30);
+				txtlogin.setFont(new Font("Arial",Font.PLAIN, 15));
+				pn.add(txtlogin);
+				
+				// Mot de passe
+				lblpassword = new JLabel("Password");
+				lblpassword.setBounds(60,200,200,30);
+				lblpassword.setFont(new Font("Arial",Font.PLAIN, 25));
+				lblpassword.setForeground(new Color(0, 1, 10));
+				pn.add(lblpassword);
+				
+				
+				JPassworldFieldpassword = new JPasswordField("Password");
+				JPassworldFieldpassword.setBounds(250,200,200,30);
+				JPassworldFieldpassword.setFont(new Font("Arial",Font.PLAIN, 25));
+		
+				
+				pn.add(JPassworldFieldpassword);
+				
+				
+			// Montrer le mot de passe
+				ckbxvue = new JCheckBox("Monter");
+					ckbxvue.setBounds(500,200,30,30);
+				ckbxvue.setFont(new Font("Arial",Font.PLAIN, 25));
+				
+				ckbxvue.addActionListener(new ActionListener() {
+					@SuppressWarnings("null")
+					public void actionPerformed(ActionEvent e) {
+						if(JCheckBox1.isSelected()) {
+							JPassworldFieldpassword = new JPasswordField(Password);
+							JPassworldFieldpassword.setEchoChar((char) 0);
+						}
+							else {
+								JPasswordField passwordpassword1 = null;
+								passwordpassword1.setEchoChar('*');	
+						}
+					}
+				});
+				pn.add(ckbxvue);
+				
+				
+				// Password forget
+				btnforgetpassword= new JButton("Forget your password?");
+				btnforgetpassword.setBounds(300,275,300,30);
+				btnforgetpassword.setFont(new Font("Arial",Font.CENTER_BASELINE, 15));
+				btnforgetpassword.setForeground(new Color(0, 1, 10));
+				
+				btnforgetpassword.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					String password;
+					password = JPassworldFieldpassword.getText();
+					btnforgetpassword = new JButton("Forget your password?");
+					if (password != null) {
+							
+						JOptionPane.showMessageDialog (null,"Write your password");
+							
+							} 
+					else {
+									JOptionPane.showMessageDialog (null, "Write new password" );
+								}
+				}		
+				
+				});
+			pn.add(btnforgetpassword);
+					
+				
+				
+				
+				// Bouton d'enregistrement
+				
+				
+				btnenregistrer  = new JButton("ENREGISTRER");
+				btnenregistrer.setBounds(70,350,250,30);
+				btnenregistrer.setFont(new Font("Arial",Font.BOLD, 25));
+				btnenregistrer.setForeground(Color.black);
+				btnenregistrer.setBackground(new Color(50, 150, 60));
+				
+				btnenregistrer.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent ev) {
+						String Login;
+					String password;
+						
+						Login = txtlogin.getText();
+						password = JPassworldFieldpassword.getText();
+						
+						String rq = "insert into TAB_UTILISATEUR (Login, Password) values (?,?)";
+						try {
+							java.sql.PreparedStatement ps = cnx.mycnx().prepareStatement(rq);
+									
+											
+							ps.setString(1, Login);
+							ps.setString (2, Password);
+							ps.executeUpdate();
+							JOptionPane.showMessageDialog(null,"Utilisateur enregister!",null,JOptionPane.INFORMATION_MESSAGE);
+							
+								
+						} catch (SQLException e) {
+							JOptionPane.showMessageDialog(null, "Erreur!" + e.getMessage(), null, JOptionPane.ERROR_MESSAGE);
+						}
+					}
+				});
+				pn.add(btnenregistrer);
+				
+			
+				
+				//Bouton connection
+				
+
+			btnconnection  = new JButton("Connection");
+			btnconnection.setBounds(500,350,220,30);
+			btnconnection.setFont(new Font("Arial",Font.BOLD, 25));
+			btnconnection.setForeground(Color.black);
+			btnconnection.setBackground(new Color(50, 150, 60));
+			
+			btnconnection.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent ev) {
+					String Login;
+				String password;
+					
+					Login = txtlogin.getText();
+					password = JPassworldFieldpassword.getText();
+					
+		        try {
+		            String rq = " select * from TAB_UTILISATEUR  where Login = ? and Password = ?";
+						java.sql.PreparedStatement ps = cnx.mycnx().prepareStatement(rq);	
+						ps = cnx.prepareStatement(rq);
+						ps.setString(1, Login);
+						ps.setString (2, Password);
+						rs= ps.executeQuery();
+		            //Condition
+		            if (((ResultSet) ps).next()) {
+		            	JOptionPane.showMessageDialog(null,"Bienvenue \" + Login",null,JOptionPane.INFORMATION_MESSAGE);
+						cnx.mycnx().close();
+		            }else{
+		                JOptionPane.showMessageDialog(null, "Erreur de connection");
+		            }
+		            cnx.mycnx().close();
+		        } catch (Exception e) {
+		            e.printStackTrace();
+		        }
+				}
+			});
+		pn.add(btnconnection);
+			}
+		
+
+		public static void main(String[]args) {
+			PMSI pg = new PMSI();
+			pg.setVisible(true);
+		}
+
+			}
+		
+	
+	
+			/*@SuppressWarnings("serial")
+			class con_util extends javax.swing.JFrame{
+				
+				java.sql.Connection con;
+				PreparedStatement pst;
+				Result rs;
+				public con_util() {
+					initCompenents();
+					Table_con_util();
+				}
+				
+				
+				private void Table_con_util() {
+					// TODO Auto-generated method stub
+					
+				}
+
+
+				private void initCompenents() {
+					// TODO Auto-generated method stub
+					
+				}
+
+
+				private void Connect() {
+					try {
+						Class.forName("org.squile.JDBC");
+						con = DriverManager.getConnection("jdbc:sqlile:Tab_utilisateur.bdprojet");
+						System.out.println("Connection etablie");
+					}catch (Exception e) {
+						System.out.println("Connection etablie");
+					}
+						
+					}
+				}
+			
+			/*public void actionPerformed(ActionEvent ev) {
+				String Login;
+				@SuppressWarnings("unused")
+				JPasswordField Password;
+				Login = txtlogin.getText();
+				Password = passwordpassword;
+				String rq ="delete from tb_utilisateur where login = ' " + Login + "'";
+		
+				try {
+					java.sql.PreparedStatement ps = cnx.mycnx().prepareStatement(rq);
+						().close();
+						
+				} catch (SQLException e) {
+					JOptionPane.sho	ps.setString(1, Login);
+							ps.setString(2, Login);
+							ps.executeUpdate();
+					JOptionPane.showMessageDialog(null,"Utilisateur Supprimer!",null,JOptionPane.INFORMATION_MESSAGE);
+					cnx.mycnxwMessageDialog(null, "Erreur!" + e.getMessage(), null, JOptionPane.ERROR_MESSAGE);
+				}*/
+		
+	

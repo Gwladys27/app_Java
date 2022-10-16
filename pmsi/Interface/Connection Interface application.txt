@@ -1,0 +1,60 @@
+package com.mysql.cj.jdbc;
+
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.Set;
+
+
+public class Connection  {
+	java.sql.Connection con;
+	
+	public Connection() {
+
+	  try {
+          Class.forName("com.mysql.cj.jdbc.Driver");
+          con = DriverManager.getConnection("jdbc:mySQL://localhost:3306/bdprojet", "Tatiana", "Tatiana@27)");
+          System.out.println("Connection etablie");
+	} catch (SQLException | ClassNotFoundException e) {
+		System.out.println("Erreur de connection");
+	e.printStackTrace();
+	}
+	}
+public Connection maconnection() {
+	  return (Connection) con;
+	  
+	  
+}
+
+		
+public void executeQuery(String rq,Object[]params) throws SQLException {
+	PreparedStatement ps = ((java.sql.Connection) con).prepareStatement(rq);
+	if (params != null ) {
+		int index = 1;
+			for(Object param : params) {
+				ps.setObject(index, param);
+				index++;
+			}
+	}
+	
+
+char[] rs = null;
+System.out.println(rs);
+}
+
+public PreparedStatement prepareStatement(String rq) {
+	// TODO Auto-generated method stub
+	return null;
+}
+public void close1() {
+	// TODO Auto-generated method stub
+	
+}
+public void close() {
+	// TODO Auto-generated method stub
+	
+}
+
+
+
+}
